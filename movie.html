@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StreamVibe – Movies</title>
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at top, #0a0a0a, #000000 80%);
+            color: #f0f0f0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-top: 80px; /* Space for the fixed header */
+        }
+
+        button,
+        .btn,
+        .btn-modal {
+            padding: 12px 22px;
+            border: none;
+            border-radius: 25px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover,
+        .btn:hover,
+        .btn-modal:hover {
+            transform: scale(1.08);
+            box-shadow: 0 0 18px rgba(212, 175, 55, 0.6);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 40px;
+            background: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.4);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 30px;
+            font-weight: bold;
+            color: #d4af37;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-evenly;
+            flex: 1;
+            max-width: 420px;
+        }
+
+        nav a {
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            padding: 8px 22px;
+            border-radius: 25px;
+            color: #f5f5f5;
+            position: relative;
+            transition: 0.4s;
+        }
+
+        nav a::after {
+            content: "";
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #d4af37, #c0c0c0);
+            transition: width 0.3s ease-in-out;
+        }
+
+        nav a:hover::after,
+        nav a.active::after {
+            width: 60%;
+        }
+
+        .auth {
+            display: flex;
+            gap: 15px;
+        }
+
+        .login-btn {
+            background: transparent;
+            color: #f5f5f5;
+            border: 1px solid #c0c0c0;
+        }
+
+        .signup-btn {
+            background: linear-gradient(135deg, #d4af37, #e6c200);
+            color: #0a0a0a;
+        }
+
+        /* --- CAROUSEL/SLIDER STYLES (NEW/MODIFIED) --- */
+        .slider-container {
+            width: 100%;
+            height: 600px; /* Set a height for the slider */
+            position: relative;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .hero-slide {
+            display: none; /* Hidden by default */
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .hero-slide.active {
+            display: flex;
+        }
+
+        .hero-slide-bg {
+            background-repeat: no-repeat;
+            background-position: center right;
+            background-size: cover;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Fade-in animation */
+        .fade {
+            animation-name: fade;
+            animation-duration: 1.5s;
+        }
+
+        @keyframes fade {
+            from { opacity: 0.4 } 
+            to { opacity: 1 }
+        }
+
+        /* Gradient overlay for text readability */
+        .hero-slide-bg::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to right, #000000 10%, transparent 100%);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: absolute;
+            top: 50%;
+            left: 60px;
+            transform: translateY(-50%);
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 2; /* Keep content above the gradient */
+        }
+
+        .hero-content h1 {
+            font-size: 60px;
+            font-weight: 700;
+            color: #d4af37;
+            letter-spacing: -2px;
+        }
+
+        .hero-content p {
+            font-size: 18px;
+            color: #ccc;
+        }
+
+        .watch-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .btn-play {
+            background: linear-gradient(135deg, #d4af37, #e6c200);
+            color: #0a0a0a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-play svg {
+            fill: #0a0a0a;
+        }
+
+        .btn-add {
+            background: transparent;
+            border: 1px solid #c0c0c0;
+            color: #f5f5f5;
+        }
+
+        /* --- Movie Sections (Existing Styles) --- */
+        .movie-section {
+            padding: 40px 60px;
+        }
+        
+        /* ... (rest of your existing movie section styles) ... */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            font-size: 28px;
+            color: #f0f0f0;
+        }
+
+        .section-header a {
+            color: #d4af37;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        .section-header a:hover {
+            color: #e6c200;
+        }
+
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .movie-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.2);
+        }
+
+        .movie-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .movie-card .title-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+            padding: 15px;
+        }
+
+        .movie-card .title-overlay h3 {
+            font-size: 16px;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .movie-card .title-overlay p {
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        /* Horizontal scrollable list */
+        .movie-list-scroll {
+            display: flex;
+            overflow-x: auto;
+            gap: 20px;
+            padding-bottom: 15px;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE 10+ */
+        }
+
+        .movie-list-scroll::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+
+        .movie-list-scroll .movie-card {
+            flex-shrink: 0;
+            width: 220px;
+        }
+
+        /* Footer */
+        footer {
+            background: #0a0a0a;
+            text-align: center;
+            padding: 25px;
+            font-size: 14px;
+            color: #aaa;
+            border-top: 1px solid rgba(192, 192, 192, 0.2);
+        }
+
+        footer .address {
+            font-style: normal;
+            color: #777;
+        }
+
+        /* --- Video Modal --- */
+        #videoModal {
+            /* Start hidden */
+            display: none; 
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+        }
+
+        #moviePlayer {
+            width: 90%;
+            max-width: 1200px;
+            border-radius: 10px;
+        }
+
+        #videoControls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 10;
+        }
+
+        #videoControls button {
+            padding: 10px 20px;
+            font-weight: bold;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            background: #d4af37; /* Control button style */
+            color: #0a0a0a;
+        }
+
+        #videoModal .close-video {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 40px; /* Made bigger for easier clicking */
+            color: #d4af37; /* Match theme color */
+            cursor: pointer;
+            z-index: 10;
+            line-height: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a class="logo">🎬 StreamVibe</a>
+        <nav>
+            <a href="home.html">Home</a>
+            <a href="movie-collection.html" class="active">Movies</a>
+            <a href="music.html">Music</a>
+        </nav>
+        <div class="auth">
+            <button class="login-btn">Login</button>
+            <button class="signup-btn">Sign Up</button>
+        </div>
+    </header>
+
+    <section class="slider-container">
+        <div class="hero-slide fade">
+            <div class="hero-slide-bg" style="background-image: url('leo1.avif');"></div>
+            <div class="hero-content">
+                <h1>Leo</h1>
+                <p>“Leo is a Tamil action thriller where a café owner’s quiet life shatters as his violent past resurfaces, forcing him into a deadly battle.”</p>
+                <div class="watch-buttons">
+                    <button class="btn btn-play" onclick="openVideoModal()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        Watch now
+                    </button>
+                    <button class="btn btn-add">
+                        + Add to watchlist
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-slide fade">
+            <div class="hero-slide-bg" style="background-image: url('vidamuyarchi.webp'); background-position: center;"></div>
+            <div class="hero-content">
+                <h1>Vidamuyarchi</h1>
+                <p>An epic tale of revenge and courage, Vidamuyarchi follows a man's quest for justice against overwhelming odds.</p>
+                <div class="watch-buttons">
+                    <button class="btn btn-play" onclick="openVideoModal()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        Stream now
+                    </button>
+                    <button class="btn btn-add">
+                        + Add to watchlist
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-slide fade">
+            <div class="hero-slide-bg" style="background-image: url('Coolie-poster.webp'); background-position: right;"></div>
+            <div class="hero-content">
+                <h1>Coolie</h1>
+                <p>A high-octane action thriller exploring the dark underbelly of the city, where one man fights for freedom.</p>
+                <div class="watch-buttons">
+                    <button class="btn btn-play" onclick="openVideoModal()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        Watch Trailer
+                    </button>
+                    <button class="btn btn-add">
+                        + Add to watchlist
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="movie-section">
+        <div class="section-header">
+            <h2>Top Movies</h2>
+            <a href="#">See more ></a>
+        </div>
+        <div class="movie-list-scroll">
+            <a href="#" class="movie-card">
+                <img src="vidamuyarchi.webp" alt="The Night Guardian">
+                <div class="title-overlay">
+                    <h3>Vidamuyarchi</h3>
+                    <p>2024</p>
+                </div>
+            </a>
+            <a href="#" class="movie-card">
+                <img src="retro poster.jpg" alt="Crimson Tide">
+                <div class="title-overlay">
+                    <h3>Retro</h3>
+                    <p>2023</p>
+                </div>
+            </a>
+            <a href="#" class="movie-card">
+                <img src="Coolie-poster.webp" alt="The Silent Storm">
+                <div class="title-overlay">
+                    <h3>Coolie</h3>
+                    <p>2024</p>
+                </div>
+            </a>
+            <a href="#" class="movie-card">
+                <img src="rayan.avif" alt="City of Secrets">
+                <div class="title-overlay">
+                    <h3>Rayan</h3>
+                    <p>2022</p>
+                </div>
+            </a>
+            <a href="#" class="movie-card">
+                <img src="96.jpeg" alt="Beyond the Horizon">
+                <div class="title-overlay">
+                    <h3>96</h3>
+                    <p>2023</p>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <section class="movie-section">
+        <div class="section-header">
+            <h2>Action & Adventure</h2>
+            <a href="#">See more ></a>
+        </div>
+        <div class="movie-list-scroll">
+            <a href="#" class="movie-card">
+                <img src="Avengers-Endgame-1.jpg" alt="The Lost Relic">
+                <div class="title-overlay">
+                    <h3>Avengers-Endgame</h3>
+                    <p>2024</p>
+                </div>
+            </a>
+            <a href="#" class="movie-card">
+                <img src="tomorrow wwar1.webp" alt="Apex Pursuit">
+                <div class="title-overlay">
+                    <h3>The Tomorrow War</h3>
+                    <p>2023</p>
+                </div>
+            </a>
+            <a href="#" class="movie-card">
+                <img src="vikaram.webp" alt="Code Vengeance">
+                <div class="title-overlay">
+                    <h3>Vikaram</h3>
+                    <p>2024</p>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2025 StreamVibe. Crafted with Elegance.</p>
+        <p class="address">1 Prestige Lane, Platinum District, Global City</p>
+    </footer>
+
+    <div id="videoModal">
+        <div style="position:relative; width:100%; height:100%; display:flex; justify-content:center; align-items:center;">
+            <span class="close-video" onclick="closeVideoModal()">&times;</span>
+            <video id="moviePlayer" controls autoplay> 
+                <source src="TamilPrint - Leo (2023) Tamil HD DVD 720pHD 5.1 n 2.0.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div id="videoControls">
+                <button onclick="moviePlayer.play()">Play</button>
+                <button onclick="moviePlayer.pause()">Pause</button>
+                <button onclick="moviePlayer.currentTime=0; moviePlayer.play()">Restart</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- VIDEO MODAL JAVASCRIPT ---
+        const modal = document.getElementById("videoModal");
+        const moviePlayer = document.getElementById("moviePlayer"); 
+
+        function openVideoModal() {
+            modal.style.display = "flex";
+            moviePlayer.load(); 
+            moviePlayer.play();
+        }
+
+        function closeVideoModal() {
+            modal.style.display = "none";
+            moviePlayer.pause();
+            moviePlayer.currentTime = 0;
+        }
+
+        // --- AUTOMATIC SLIDER JAVASCRIPT (NEW) ---
+        let slideIndex = 0;
+        const slides = document.getElementsByClassName("hero-slide");
+
+        function showSlides() {
+            // 1. Hide all slides
+            for (let i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";  
+                slides[i].classList.remove('active');
+            }
+
+            // 2. Advance the index and loop back to the first slide if needed
+            slideIndex++;
+            if (slideIndex > slides.length) {
+                slideIndex = 1;
+            }
+
+            // 3. Display the current slide (index is slideIndex - 1)
+            slides[slideIndex - 1].style.display = "flex";  
+            slides[slideIndex - 1].classList.add('active'); // Add active class for fade animation
+
+            // 4. Call this function again after 4000 milliseconds (4 seconds)
+            setTimeout(showSlides, 4000); 
+        }
+
+        // Start the slider when the page loads
+        showSlides();
+    </script>
+
+</body>
+</html>

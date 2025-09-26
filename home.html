@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>StreamVibe – Ultra Luxury Theme</title>
+<style>
+/* Reset */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: radial-gradient(circle at top, #0a0a0a, #000000 80%);
+  color: #f0f0f0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Buttons */
+button,.btn,.btn-modal {
+  padding: 12px 22px;
+  border: none;
+  border-radius: 25px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+button:hover,.btn:hover,.btn-modal:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 18px rgba(212, 175, 55, 0.6);
+}
+
+/* Header */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 40px;
+  background: rgba(10, 10, 10, 0.6);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.4);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+.logo { font-size: 30px; font-weight: bold; color: #d4af37; }
+
+nav { display: flex; justify-content: space-evenly; flex: 1; max-width: 420px; }
+nav a { text-decoration: none; font-size: 16px; font-weight: 500; padding: 8px 22px; border-radius: 25px; color: #f5f5f5; position: relative; transition: 0.4s; }
+nav a::after {
+  content: "";
+  position: absolute;
+  bottom: -4px; left: 50%;
+  transform: translateX(-50%);
+  width: 0; height: 2px;
+  background: linear-gradient(90deg, #d4af37, #c0c0c0);
+  transition: width 0.3s ease-in-out;
+}
+nav a:hover::after { width: 60%; }
+
+.auth { display: flex; gap: 15px; align-items: center; position: relative; }
+.login-btn { background: transparent; color: #f5f5f5; border: 1px solid #c0c0c0; }
+.signup-btn { background: linear-gradient(135deg, #d4af37, #e6c200); color: #0a0a0a; }
+
+/* Profile Icon with initials */
+.profile-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #d4af37;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-weight: bold;
+  color: #0a0a0a;
+  margin-left: 10px;
+  font-size: 16px;
+  text-transform: uppercase;
+}
+
+/* Hero Section */
+.hero {
+  position: relative;
+  flex: 1;
+  height: 100vh;
+  background: url('https://images.pexels.com/photos/799137/pexels-photo-799137.jpeg') no-repeat center center/cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0 20px;
+  margin-top: 80px;
+}
+.overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(10, 10, 10, 0.85);
+}
+.hero-content { position: relative; z-index: 2; max-width: 800px; }
+.hero h1 { font-size: 70px; font-weight: 700; color:#d4af37; }
+.hero p { font-size: 22px; margin: 15px 0 35px; color: #ccc; }
+.buttons { display: flex; gap: 20px; justify-content: center; }
+.btn-movies { background: linear-gradient(135deg, #d4af37, #e6c200); color: #0a0a0a; }
+.btn-music { background: rgba(255, 255, 255, 0.08); color: #f5f5f5; border: 1px solid #c0c0c0; }
+
+/* Footer */
+footer { background: #0a0a0a; text-align: center; padding: 25px; font-size: 14px; color: #aaa; border-top: 1px solid rgba(192, 192, 192, 0.2); }
+footer .address { font-style: normal; color: #777; }
+
+/* Modals */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.95);
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+.modal-content {
+  background: rgba(20,20,20,0.95);
+  padding: 30px;
+  border-radius: 15px;
+  width: 350px;
+  box-shadow: 0 0 25px rgba(212,175,55,0.5);
+  position: relative;
+}
+.modal-content h2 { text-align: center; color: gold; margin-bottom: 20px; }
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; margin-bottom: 5px; font-size: 14px; color: #f0e68c; }
+.form-group input { width: 100%; padding: 10px; border: none; border-radius: 8px; background: #2c2c2c; color: white; outline: none; }
+.btn-modal { width: 100%; margin-top: 10px; background: linear-gradient(90deg, gold, #d4af37); color: black; }
+.close-btn { position: absolute; top: 10px; right: 15px; font-size: 20px; cursor: pointer; color: #ccc; }
+.toggle { text-align: center; margin-top: 12px; font-size: 14px; }
+.toggle a { color: gold; cursor: pointer; font-weight: bold; }
+
+/* Profile Modal */
+#profileModal .modal-content { width: 380px; }
+#profileModal input { background: #2a2a2a; color: #fff; }
+#profileModal .save-btn { margin-top: 15px; width: 100%; background: linear-gradient(90deg, gold, #d4af37); color: #0a0a0a; }
+</style>
+</head>
+<body>
+
+<div id="mainContent" style="display:none;">
+  <header>
+    <a class="logo">🎬 StreamVibe</a>
+    <nav>
+      <a href="home.html">Home</a>
+      <a href="movie.html">Movies</a>
+      <a href="music.html">Music</a>
+    </nav>
+    <div class="auth">
+      <button class="login-btn" onclick="openModal('login')">Login</button>
+      <button class="signup-btn" onclick="openModal('signup')">Sign Up</button>
+      <div class="profile-icon" id="profileIcon" onclick="openProfile()">??</div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="overlay"></div>
+    <div class="hero-content">
+      <h1>Experience Luxury Streaming</h1>
+      <p>Where cinema meets music in an atmosphere of elegance and prestige.</p>
+      <div class="buttons">
+        <button class="btn btn-movies" onclick="window.location.href= 'movie.html'">Explore Movies</button>
+        <button class="btn btn-music" onclick="window.location.href='music.html'">Explore Music</button>
+      </div>
+    </div>
+  </section>
+
+  <div id="welcome"></div>
+  <footer>
+    <p>© 2025 StreamVibe. Crafted with Elegance.</p>
+    <p class="address">1 Prestige Lane, Platinum District, Global City</p>
+  </footer>
+</div>
+
+<!-- Auth Modal -->
+<div id="authModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal()">&times;</span>
+    <div id="loginForm">
+      <h2>Login</h2>
+      <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="user@example.com"></div>
+      <div class="form-group"><label>Password</label><input type="password" id="loginPassword" placeholder="Enter password"></div>
+      <button class="btn-modal" onclick="login()">Login</button>
+      <div class="toggle">Don't have an account? <a onclick="toggleForm('signup')">Signup</a></div>
+    </div>
+    <div id="signupForm" style="display:none;">
+      <h2>Signup</h2>
+      <div class="form-group"><label>Full Name</label><input type="text" id="signupName" placeholder="Enter your name"></div>
+      <div class="form-group"><label>Email</label><input type="email" id="signupEmail" placeholder="user@example.com"></div>
+      <div class="form-group"><label>Password</label><input type="password" id="signupPassword" placeholder="Create password"></div>
+      <button class="btn-modal" onclick="signup()">Signup</button>
+      <div class="toggle">Already have an account? <a onclick="toggleForm('login')">Login</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- Profile Modal -->
+<div id="profileModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeProfile()">&times;</span>
+    <h2>User Profile</h2>
+    <div class="form-group"><label>Name</label><input type="text" id="profileName"></div>
+    <div class="form-group"><label>Email</label><input type="email" id="profileEmail" disabled></div>
+    <div class="form-group"><label>Password</label><input type="password" id="profilePassword"></div>
+    <button class="save-btn" onclick="saveProfile()">Save</button>
+  </div>
+</div>
+
+<script>
+// Authentication & Profile
+function openModal(type){ document.getElementById('authModal').style.display='flex'; if(type==='login') showLogin(); else showSignup(); }
+function closeModal(){ document.getElementById('authModal').style.display='none'; }
+function toggleForm(type){ if(type==='login') showLogin(); else showSignup(); }
+function showLogin(){ document.getElementById('loginForm').style.display='block'; document.getElementById('signupForm').style.display='none'; }
+function showSignup(){ document.getElementById('loginForm').style.display='none'; document.getElementById('signupForm').style.display='block'; }
+
+function signup(){
+  let name = document.getElementById("signupName").value.trim();
+  let email = document.getElementById("signupEmail").value.trim();
+  let password = document.getElementById("signupPassword").value.trim();
+  if(!name || !email || !password){ alert("Fill all fields!"); return; }
+  let users = JSON.parse(localStorage.getItem("users") || "[]");
+  if(users.some(u => u.email === email)){ alert("Email already registered!"); return; }
+  users.push({ name, email, password });
+  localStorage.setItem("users", JSON.stringify(users));
+  alert("Signup successful! You can now log in.");
+  showLogin();
+}
+
+function login(){
+  let email = document.getElementById("loginEmail").value.trim();
+  let password = document.getElementById("loginPassword").value.trim();
+  if(!email || !password){ alert("Fill all fields!"); return; }
+  let users = JSON.parse(localStorage.getItem("users") || "[]");
+  let user = users.find(u => u.email === email && u.password === password);
+  if(user){
+    localStorage.setItem("currentUser", JSON.stringify(user));
+    closeModal();
+    document.getElementById("mainContent").style.display = 'block';
+    document.getElementById("welcome").innerHTML = `Welcome, ${user.name}! You are now logged in to StreamVibe.`;
+    updateProfileIcon(user.name);
+  } else { alert("Invalid email or password."); }
+}
+
+function openProfile(){
+  let currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+  if(!currentUser.email){ alert("Login first to view profile."); return; }
+  document.getElementById("profileName").value = currentUser.name;
+  document.getElementById("profileEmail").value = currentUser.email;
+  document.getElementById("profilePassword").value = currentUser.password;
+  document.getElementById("profileModal").style.display='flex';
+}
+function closeProfile(){ document.getElementById("profileModal").style.display='none'; }
+function saveProfile(){
+  let currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+  currentUser.name = document.getElementById("profileName").value.trim();
+  currentUser.password = document.getElementById("profilePassword").value.trim();
+  localStorage.setItem("currentUser", JSON.stringify(currentUser));
+  let users = JSON.parse(localStorage.getItem("users") || "[]");
+  users = users.map(u => u.email === currentUser.email ? currentUser : u);
+  localStorage.setItem("users", JSON.stringify(users));
+  alert("Profile updated successfully!");
+  document.getElementById("welcome").innerHTML = `Welcome, ${currentUser.name}! You are now logged in to StreamVibe.`;
+  updateProfileIcon(currentUser.name);
+  closeProfile();
+}
+
+// Update profile icon with initials
+function updateProfileIcon(name){
+  const initials = name.split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById("profileIcon").textContent = initials;
+}
+
+// On page load
+window.onload = function(){
+  let currentUser = localStorage.getItem("currentUser");
+  if(!currentUser){ openModal('login'); }
+  else{
+    currentUser = JSON.parse(currentUser);
+    document.getElementById("mainContent").style.display = 'block';
+    document.getElementById("welcome").innerHTML = `Welcome back, ${currentUser.name}!`;
+    updateProfileIcon(currentUser.name);
+  }
+};
+</script>
+</body>
+</html>
